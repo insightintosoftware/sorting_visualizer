@@ -1,0 +1,161 @@
+<html>
+<head>
+<script type="text/javascript">
+	window.onload = function(){
+		let arr = getArr(150);
+		mergeSort(arr);
+	}
+
+	function getArr(n){
+		let arr = [];
+		for(let i=0; i < n; i++){
+			arr[i] = i;
+		}
+		for(let i=0; i < n; i++){
+			let j = Math.floor(Math.random()*n);
+			[arr[i],arr[j]]=[arr[j],arr[i]];
+		}
+		return arr;
+	}
+
+	async function render(arr){
+		let root = document.getElementById("root");
+		root.innerHTML = "";
+		for(let i=0; i < arr.length; i++){
+			let div = document.createElement("div");
+			div.style.marginTop = "auto";
+			div.style.width = "10px";
+			div.style.height = arr[i]*5 +"px";
+			div.style.backgroundColor = "hsl("+360*arr[i]/arr.length+" 100% 50%)";
+			root.appendChild(div);
+		}
+		await new Promise(r => setTimeout(r, 5));
+	}
+
+	async function bubbleSort(arr) {
+		let len = arr.length;
+		for (let i = 0; i < len; i++) {
+			for (let j = 0; j < len - i - 1; j++) {
+				if (arr[j] > arr[j + 1]) {
+					// Swap arr[j] and arr[j + 1]
+					[arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+					await render(arr);
+				}
+			}
+		}
+		return arr;
+	}
+
+	async function insertionSort(arr) {
+		let len = arr.length;
+		for (let i = 1; i < len; i++) {
+			let key = arr[i];
+			let j = i - 1;
+
+			while (j >= 0 && arr[j] > key) {
+				arr[j + 1] = arr[j];
+				await render(arr);
+				j = j - 1;
+			}
+			arr[j + 1] = key;
+			await render(arr);
+		}
+		return arr;
+	}
+
+	async function quickSort(arr) {
+		await quickSort0(arr, 0, arr.length-1);
+	}
+
+	async function quickSort0(arr, low, high) {
+		if (low < high) {
+			let pi = await partition(arr, low, high);
+			
+			await quickSort0(arr, low, pi - 1);
+			await quickSort0(arr, pi + 1, high);
+		}
+	}
+
+	async function partition(arr, low, high) {
+		let pivot = arr[high];
+	   
+		let i = low - 1;
+	   
+		for (let j = low; j <= high - 1; j++) {
+			if (arr[j] < pivot) {
+				i++;
+				[arr[i], arr[j]] = [arr[j], arr[i]];
+				await render(arr);
+			}
+		}
+	   
+		[arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+		await render(arr);
+		return i + 1;
+	}
+
+	async function mergeSort(arr){
+		await mergeSort0(arr, 0, arr.length-1);
+	}
+
+	async function mergeSort0(arr, l, r){
+		if(l>=r){
+			return;
+		}
+		var m =l+ parseInt((r-l)/2);
+		await mergeSort0(arr,l,m);
+		await mergeSort0(arr,m+1,r);
+		await merge(arr,l,m,r);
+	}
+
+	async function merge(arr, l, m, r)
+	{
+		var n1 = m - l + 1;
+		var n2 = r - m;
+	 
+		var L = new Array(n1); 
+		var R = new Array(n2);
+	 
+		for (var i = 0; i < n1; i++)
+			L[i] = arr[l + i];
+		for (var j = 0; j < n2; j++)
+			R[j] = arr[m + 1 + j];
+	 
+		var i = 0;
+		var j = 0;
+		var k = l;
+	 
+		while (i < n1 && j < n2) {
+			if (L[i] <= R[j]) {
+				arr[k] = L[i];
+				await render(arr);
+				i++;
+			}
+			else {
+				arr[k] = R[j];
+				await render(arr);
+				j++;
+			}
+			k++;
+		}
+		
+		while (i < n1) {
+			arr[k] = L[i];
+			await render(arr);
+			i++;
+			k++;
+		}
+		
+		while (j < n2) {
+			arr[k] = R[j];
+			await render(arr);
+			j++;
+			k++;
+		}
+	}
+</script>
+</head>
+<body>
+    <div id="root" style="height:800px; display: flex;"></div>
+</body>
+</html>
